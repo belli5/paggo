@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16
+    container_name: paggo_ocr_db
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: paggo
+      POSTGRES_PASSWORD: paggo
+      POSTGRES_DB: paggo_ocr
+    command:
+      - postgres
+      - -c
+      - listen_addresses=*
+      - -c
+      - password_encryption=md5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
