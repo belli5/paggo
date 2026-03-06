@@ -21,39 +21,50 @@ enum ChatRole {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
+  id        String   @id @default(cuid())
+  email     String   @unique
   password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   documents Document[]
 }
 
 model Document {
-  id          String         @id @default(cuid())
-  userId      String
-  filename    String
-  mimeType    String
-  fileUrl     String         // path/local ou URL (S3 no futuro)
-  status      DocumentStatus @default(UPLOADED)
+  id       String         @id @default(cuid())
+  userId   String
+  filename String
+  mimeType String
+  fileUrl  String // path/local ou URL (S3 no futuro)
+  status   DocumentStatus @default(UPLOADED)
 
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ocr         OcrResult?
-  chats       ChatMessage[]
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ocr              OcrResult?
+  chats            ChatMessage[]
+  documentAnalysis DocumentAnalysis?
 }
 
 model OcrResult {
-  id         String   @id @default(cuid())
-  documentId String   @unique
+  id         String @id @default(cuid())
+  documentId String @unique
   rawText    String
 
-  createdAt  DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model DocumentAnalysis {
+  id         String   @id @default(cuid())
+  documentId String   @unique
+  summary    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }
 
 model ChatMessage {
@@ -62,7 +73,7 @@ model ChatMessage {
   role       ChatRole
   content    String
 
-  createdAt  DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }

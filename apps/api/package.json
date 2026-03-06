@@ -20,12 +20,16 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google/genai": "^1.44.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.1.16",
     "@nestjs/swagger": "^11.2.6",
     "@prisma/client": "^6.19.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.4",
     "multer": "^2.1.1",
+    "openai": "^6.27.0",
     "pdf-parse": "^1.1.1",
     "pdf2pic": "^3.2.0",
     "pg": "^8.20.0",
