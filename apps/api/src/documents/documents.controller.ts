@@ -99,4 +99,15 @@ export class DocumentsController {
   findOne(@Param('id') id: string) {
     return this.documentsService.findOne(id);
   }
+
+  @Post(':id/ocr')
+  @ApiOperation({ summary: 'Executar OCR no documento' })
+  @ApiResponse({
+    status: 200,
+    description: 'OCR executado com sucesso',
+  })
+
+  async runOcr(@Param('id') id: string) {
+    return this.documentsService.runOcr(id)
+  }
 }
