@@ -4,6 +4,8 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  Get, 
+  Param,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -82,5 +84,19 @@ export class DocumentsController {
     });
 
     return document;
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Listar documentos' })
+  @ApiResponse({ status: 200, description: 'Lista de documentos' })
+  findAll() {
+    return this.documentsService.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Buscar documento por ID' })
+  @ApiResponse({ status: 200, description: 'Documento encontrado' })
+  findOne(@Param('id') id: string) {
+    return this.documentsService.findOne(id);
   }
 }
