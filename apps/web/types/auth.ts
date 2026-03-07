@@ -1,3 +1,10 @@
+export type User = {
+  id: string
+  email: string
+  createdAt: string
+  updatedAt: string
+}
+
 export type LoginPayload = {
   email: string
   password: string
@@ -5,11 +12,6 @@ export type LoginPayload = {
 
 export type LoginResponse = {
   message: string
-  user: {
-    id: string
-    email: string
-    createdAt: string
-    updatedAt: string
-  }
+  user: User
   access_token: string
 }
