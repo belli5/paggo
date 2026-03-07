@@ -8,7 +8,9 @@ import ChatMessages from "@/components/chat/ChatMessages"
 import { useDocumentAnalysis } from "@/hooks/use-document-analysis"
 import { useDocumentChat } from "@/hooks/use-document-chat"
 import { DocumentItem } from "@/types/historico"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Download, FileText } from "lucide-react"
+import { useDocumentOcr } from "@/hooks/use-Document-Ocr"
+import { generateChatReportPdf } from "@/lib/pdf/generate-chat-report"
 
 export default function ChatPage() {
   const [summary, setSummary] = useState("")
@@ -16,6 +18,10 @@ export default function ChatPage() {
   const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
+
+  const { ocr } = useDocumentOcr({
+    documentId: selectedDocument?.id,
+    })
 
   useEffect(() => {
     const user = localStorage.getItem("user")
@@ -43,6 +49,35 @@ export default function ChatPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, sendingMessage])
+
+  const handleDownloadOriginal = () => {
+    if (!selectedDocument?.fileUrl) return
+
+    const downloadUrl = `http://localhost:3001${selectedDocument.fileUrl}`
+
+    const link = document.createElement("a")
+    link.href = downloadUrl
+    link.download = selectedDocument.filename
+    link.target = "_blank"
+
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    }
+
+    const handleDownloadReportPdf = () => {
+        if (!selectedDocument) return
+
+        generateChatReportPdf({
+            filename: selectedDocument.filename,
+            summary: analysis?.summary || "",
+            extractedText: ocr?.rawText || "",
+            messages: messages.map((message) => ({
+            role: message.role,
+            content: message.content,
+            })),
+        })
+    }
 
   return (
     <main className="flex min-h-screen bg-gray-100">
@@ -88,14 +123,34 @@ export default function ChatPage() {
                   Voltar para upload
                 </button>
 
-                <div className="mb-6 border-b border-gray-200 pb-4">
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    {selectedDocument.filename}
-                  </h2>
+                <div className="mb-6 flex items-start justify-between border-b border-gray-200 pb-4">
+                    <div>
+                        <h2 className="text-2xl font-semibold text-gray-800">
+                        {selectedDocument.filename}
+                        </h2>
 
-                  <p className="mt-1 text-sm text-gray-500">
-                    Análise gerada pela IA
-                  </p>
+                        <p className="mt-1 text-sm text-gray-500">
+                        Análise gerada pela IA
+                        </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <button
+                        onClick={handleDownloadOriginal}
+                        className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                        >
+                        <Download size={18} />
+                        Original
+                        </button>
+
+                        <button
+                        onClick={handleDownloadReportPdf}
+                        className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                        >
+                        <FileText size={18} />
+                        Relatório PDF
+                        </button>
+                    </div>
                 </div>
 
                 {loading && (

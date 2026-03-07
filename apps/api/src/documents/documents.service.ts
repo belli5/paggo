@@ -49,7 +49,8 @@ export class DocumentsService {
       throw new Error("Documento não encontrado")
     }
 
-    const filePath = path.resolve(document.fileUrl)
+    const relativePath = document.fileUrl.replace(/^\/+/, '')
+    const filePath = path.resolve(process.cwd(), relativePath)
 
     let extractedText = ""
 
@@ -122,6 +123,17 @@ export class DocumentsService {
     return this.prisma.document.findMany({
       where: {
         userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async findOcrByDocumentId(documentId: string) {
+    return this.prisma.ocrResult.findFirst({
+      where: {
+        documentId,
       },
       orderBy: {
         createdAt: 'desc',

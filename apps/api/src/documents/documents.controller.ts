@@ -4,7 +4,7 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
-  Get, 
+  Get,
   Param,
   Body,
 } from '@nestjs/common';
@@ -21,18 +21,15 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { DocumentsService } from './documents.service';
 
-@ApiTags('documents') // grupo no swagger
+@ApiTags('documents')
 @Controller('documents')
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
   @Post('upload')
-
   @ApiOperation({ summary: 'Upload de documento' })
-
   @ApiConsumes('multipart/form-data')
-
-    @ApiBody({
+  @ApiBody({
     schema: {
       type: 'object',
       properties: {
@@ -48,12 +45,10 @@ export class DocumentsController {
       required: ['file', 'userId'],
     },
   })
-
   @ApiResponse({
     status: 201,
     description: 'Documento enviado com sucesso',
   })
-
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -73,28 +68,26 @@ export class DocumentsController {
       }),
     }),
   )
-    async upload(
-      @UploadedFile() file: Express.Multer.File,
-      @Body('userId') userId: string,
-    ) {
-      if (!file) {
-        throw new BadRequestException('Arquivo não enviado');
-      }
+  async upload(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('userId') userId: string,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Arquivo não enviado');
+    }
 
-      if (!userId) {
-        throw new BadRequestException('userId não enviado');
-      }
+    if (!userId) {
+      throw new BadRequestException('userId não enviado');
+    }
 
-      const fileUrl = `storage/uploads/${file.filename}`;
+    const fileUrl = `/storage/uploads/${file.filename}`;
 
-      const document = await this.documentsService.create({
-        userId,
-        filename: file.originalname,
-        mimeType: file.mimetype,
-        fileUrl,
-      });
-
-      return document;
+    return this.documentsService.create({
+      userId,
+      filename: file.originalname,
+      mimeType: file.mimetype,
+      fileUrl,
+    });
   }
 
   @Get()
@@ -124,8 +117,17 @@ export class DocumentsController {
     status: 200,
     description: 'OCR executado com sucesso',
   })
-
   async runOcr(@Param('id') id: string) {
-    return this.documentsService.runOcr(id)
+    return this.documentsService.runOcr(id);
+  }
+
+  @Get(':id/ocr')
+  @ApiOperation({ summary: 'Buscar OCR do documento' })
+  @ApiResponse({
+    status: 200,
+    description: 'OCR encontrado com sucesso',
+  })
+  async findOcr(@Param('id') id: string) {
+    return this.documentsService.findOcrByDocumentId(id);
   }
 }
