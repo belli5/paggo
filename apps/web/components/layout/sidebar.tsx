@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { FileText, LayoutDashboard, Settings, User } from "lucide-react"
+import { FileText, LayoutDashboard, Settings, User, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useAuthUser } from "@/hooks/use-auth-user"
 import { useHistoryDocuments } from "@/hooks/use-history-documents"
 import { DocumentItem } from "@/types/historico"
+import { useRouter } from "next/navigation"
 
 type SidebarProps = {
   onSelectDocument: (document: DocumentItem) => void
@@ -35,6 +36,15 @@ export default function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname()
   const { user } = useAuthUser()
+  const router = useRouter()
+
+    function handleLogout() {
+    localStorage.removeItem("user")
+    localStorage.removeItem("token") // se você salvar token
+    localStorage.clear() // opcional
+
+    router.push("/")
+    }
 
   const { documents, loading, error } = useHistoryDocuments({
     userId: user?.id,
@@ -176,6 +186,13 @@ export default function Sidebar({
               </Link>
             )
           })}
+        <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-red-400 transition hover:bg-zinc-900 hover:text-red-300"
+            >
+            <LogOut size={18} />
+            <span>Sair</span>
+        </button>
         </nav>
       </div>
     </aside>
