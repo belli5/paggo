@@ -6,6 +6,7 @@ import {
   BadRequestException,
   Get, 
   Param,
+  Body,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -31,7 +32,7 @@ export class DocumentsController {
 
   @ApiConsumes('multipart/form-data')
 
-  @ApiBody({
+    @ApiBody({
     schema: {
       type: 'object',
       properties: {
@@ -39,7 +40,12 @@ export class DocumentsController {
           type: 'string',
           format: 'binary',
         },
+        userId: {
+          type: 'string',
+          example: '1',
+        },
       },
+      required: ['file', 'userId'],
     },
   })
 
@@ -67,23 +73,28 @@ export class DocumentsController {
       }),
     }),
   )
-  async upload(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('Arquivo não enviado');
-    }
+    async upload(
+      @UploadedFile() file: Express.Multer.File,
+      @Body('userId') userId: string,
+    ) {
+      if (!file) {
+        throw new BadRequestException('Arquivo não enviado');
+      }
 
-    const fileUrl = `storage/uploads/${file.filename}`;
+      if (!userId) {
+        throw new BadRequestException('userId não enviado');
+      }
 
-    const userId = '1';
+      const fileUrl = `storage/uploads/${file.filename}`;
 
-    const document = await this.documentsService.create({
-      userId,
-      filename: file.originalname,
-      mimeType: file.mimetype,
-      fileUrl,
-    });
+      const document = await this.documentsService.create({
+        userId,
+        filename: file.originalname,
+        mimeType: file.mimetype,
+        fileUrl,
+      });
 
-    return document;
+      return document;
   }
 
   @Get()
@@ -91,6 +102,13 @@ export class DocumentsController {
   @ApiResponse({ status: 200, description: 'Lista de documentos' })
   findAll() {
     return this.documentsService.findAll();
+  }
+
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Listar documentos de um usuário específico' })
+  @ApiResponse({ status: 200, description: 'Lista de documentos do usuário' })
+  findAllByUserId(@Param('userId') userId: string) {
+    return this.documentsService.findAllByUserId(userId);
   }
 
   @Get(':id')

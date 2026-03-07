@@ -117,4 +117,15 @@ export class DocumentsService {
 
     return saved
   }
+
+  findAllByUserId(userId: string) {
+    return this.prisma.document.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }
