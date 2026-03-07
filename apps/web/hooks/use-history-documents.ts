@@ -7,7 +7,7 @@ type UseUserDocumentsProps = {
   userId?: string
 }
 
-export function useUserDocuments({ userId }: UseUserDocumentsProps) {
+export function useHistoryDocuments({ userId }: UseUserDocumentsProps) {
   const [documents, setDocuments] = useState<DocumentItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

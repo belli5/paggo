@@ -5,7 +5,13 @@ import { usePathname } from "next/navigation"
 import { FileText, LayoutDashboard, Settings, User } from "lucide-react"
 import Image from "next/image"
 import { useAuthUser } from "@/hooks/use-auth-user"
-import { useUserDocuments } from "@/hooks/use-history-documents"
+import { useHistoryDocuments } from "@/hooks/use-history-documents"
+import { DocumentItem } from "@/types/historico"
+
+type SidebarProps = {
+  onSelectDocument: (document: DocumentItem) => void
+  selectedDocumentId?: string
+}
 
 const menuItems = [
   {
@@ -23,23 +29,26 @@ const bottomItems = [
   },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({
+  onSelectDocument,
+  selectedDocumentId,
+}: SidebarProps) {
   const pathname = usePathname()
   const { user } = useAuthUser()
 
-  const { documents, loading, error } = useUserDocuments({
+  const { documents, loading, error } = useHistoryDocuments({
     userId: user?.id,
   })
 
   function formatDate(date: string) {
     return new Intl.DateTimeFormat("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(new Date(date))
-    }
+  }
 
   return (
     <aside className="sticky top-0 flex h-screen w-72 flex-col justify-between bg-black px-4 py-6 text-white">
@@ -86,7 +95,7 @@ export default function Sidebar() {
         <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl bg-zinc-950/60 p-3">
           <div className="mb-3 flex items-center gap-2 px-1">
             <FileText size={16} className="text-zinc-400" />
-            <h2 className="text-sm font-semibold text-white">Historico</h2>
+            <h2 className="text-sm font-semibold text-white">Histórico</h2>
           </div>
 
           <div className="space-y-2">
@@ -106,18 +115,27 @@ export default function Sidebar() {
 
             {!loading &&
               !error &&
-              documents.map((doc) => (
-                <Link
-                  key={doc.id}
-                  href={`/documents/${doc.id}`}
-                  className="block rounded-xl border border-zinc-800 bg-zinc-900/70 px-3 py-3 text-zinc-300 transition hover:border-zinc-700 hover:bg-zinc-900"
-                >
-                  <p className="truncate text-sm font-medium">{doc.filename}</p>
-                  <p className="mt-1 text-xs text-zinc-500">
-                    {formatDate(doc.createdAt)}
-                  </p>
-                </Link>
-              ))}
+              documents.map((doc) => {
+                const isSelected = selectedDocumentId === doc.id
+
+                return (
+                  <button
+                    key={doc.id}
+                    type="button"
+                    onClick={() => onSelectDocument(doc)}
+                    className={`block w-full rounded-xl border px-3 py-3 text-left transition ${
+                      isSelected
+                        ? "border-zinc-600 bg-zinc-800 text-white"
+                        : "border-zinc-800 bg-zinc-900/70 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-900"
+                    }`}
+                  >
+                    <p className="truncate text-sm font-medium">{doc.filename}</p>
+                    <p className="mt-1 text-xs text-zinc-500">
+                      {formatDate(doc.createdAt)}
+                    </p>
+                  </button>
+                )
+              })}
           </div>
         </div>
       </div>
