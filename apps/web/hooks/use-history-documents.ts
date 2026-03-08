@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { DocumentItem } from "@/types/historico"
+import { API_URL } from "@/lib/api"
 
 type UseUserDocumentsProps = {
   userId?: string
@@ -25,7 +26,7 @@ export function useHistoryDocuments({ userId }: UseUserDocumentsProps) {
         setError(null)
 
         const response = await fetch(
-          `http://localhost:3001/documents/user/${userId}`,
+          `${API_URL}/documents/user/${userId}`,
           {
             method: "GET",
             headers: {

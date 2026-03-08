@@ -11,6 +11,7 @@ import { DocumentItem } from "@/types/historico"
 import { ArrowLeft, Download, FileText } from "lucide-react"
 import { useDocumentOcr } from "@/hooks/use-Document-Ocr"
 import { generateChatReportPdf } from "@/lib/pdf/generate-chat-report"
+import { API_URL } from "@/lib/api"
 
 export default function ChatPage() {
   const [summary, setSummary] = useState("")
@@ -53,7 +54,7 @@ export default function ChatPage() {
   const handleDownloadOriginal = () => {
     if (!selectedDocument?.fileUrl) return
 
-    const downloadUrl = `http://localhost:3001${selectedDocument.fileUrl}`
+    const downloadUrl = `${API_URL}${selectedDocument.fileUrl}`
 
     const link = document.createElement("a")
     link.href = downloadUrl

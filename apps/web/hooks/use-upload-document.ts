@@ -6,8 +6,9 @@ import type {
   UploadResult,
   UploadedDocument,
 } from "@/types/document"
+import { API_URL } from "@/lib/api"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+
 
 export type UploadStatus =
   | "idle"

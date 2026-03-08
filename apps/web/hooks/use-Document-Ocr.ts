@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { DocumentOcr } from "@/types/ocr"
+import { API_URL } from "@/lib/api"
 
 type UseDocumentOcrProps = {
   documentId?: string
@@ -25,7 +26,7 @@ export function useDocumentOcr({ documentId }: UseDocumentOcrProps) {
         setOcrError(null)
 
         const response = await fetch(
-          `http://localhost:3001/documents/${documentId}/ocr`,
+          `${API_URL}/documents/${documentId}/ocr`,
           {
             cache: "no-store",
           }

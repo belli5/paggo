@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { DocumentAnalysis } from "@/types/analysis"
+import { API_URL } from "@/lib/api"
 
 type UseDocumentAnalysisProps = {
   documentId?: string
@@ -25,7 +26,7 @@ export function useDocumentAnalysis({ documentId }: UseDocumentAnalysisProps) {
         setError(null)
 
         const response = await fetch(
-          `http://localhost:3001/documents/${documentId}/analysis`,
+          `${API_URL}/documents/${documentId}/analysis`,
           {
             cache: "no-store",
           }

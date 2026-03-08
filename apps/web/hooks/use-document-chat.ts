@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { ChatMessage, ChatResponse } from "@/types/chat"
+import { API_URL } from "@/lib/api"
 
 type UseDocumentChatProps = {
   documentId?: string
@@ -24,7 +25,7 @@ export function useDocumentChat({ documentId }: UseDocumentChatProps) {
       setError(null)
 
       const response = await fetch(
-        `http://localhost:3001/documents/${documentId}/chat/messages`
+        `${API_URL}/documents/${documentId}/chat/messages`
       )
 
       if (!response.ok) {
@@ -63,7 +64,7 @@ export function useDocumentChat({ documentId }: UseDocumentChatProps) {
       setError(null)
 
       const response = await fetch(
-        `http://localhost:3001/documents/${documentId}/chat`,
+        `${API_URL}/documents/${documentId}/chat`,
         {
           method: "POST",
           headers: {

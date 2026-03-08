@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import type { RegisterPayload, RegisterResponse } from "@/types/auth"
+import { API_URL } from "@/lib/api"
 
 export function useRegister() {
   const [loading, setLoading] = useState(false)
@@ -12,7 +13,7 @@ export function useRegister() {
       setLoading(true)
       setError("")
 
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
