@@ -40,7 +40,6 @@ export class DocumentsService {
   }
 
   async runOcr(documentId: string) {
-
     const document = await this.prisma.document.findUnique({
       where: { id: documentId },
     })
@@ -52,51 +51,19 @@ export class DocumentsService {
     const relativePath = document.fileUrl.replace(/^\/+/, '')
     const filePath = path.resolve(process.cwd(), relativePath)
 
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Arquivo não encontrado: ${filePath}`)
+    }
+
     let extractedText = ""
 
-    // -------------------------------------------------
-    // 1️Se for PDF tenta extrair texto direto
-    // -------------------------------------------------
-
     if (document.mimeType === "application/pdf") {
-
       const buffer = fs.readFileSync(filePath)
 
       const parsed = await pdfParse(buffer)
 
-      extractedText = parsed.text?.trim()
-
-      // -------------------------------------------------
-      // 2️Se não conseguiu extrair texto → OCR
-      // -------------------------------------------------
-
-      if (!extractedText) {
-
-        const convert = fromPath(filePath, {
-          density: 300,
-          saveFilename: "ocr-temp",
-          savePath: "./storage/tmp",
-          format: "png",
-        })
-
-        const page = await convert(1)
-
-        const result = await Tesseract.recognize(
-          page.path!,
-          "por+eng"
-        )
-
-        extractedText = result.data.text
-      }
-
-    }
-
-    // -------------------------------------------------
-    // 3️Se for imagem → OCR direto
-    // -------------------------------------------------
-
-    else {
-
+      extractedText = parsed.text?.trim() || ""
+    } else {
       const result = await Tesseract.recognize(
         filePath,
         "por+eng"
@@ -104,10 +71,6 @@ export class DocumentsService {
 
       extractedText = result.data.text
     }
-
-    // -------------------------------------------------
-    // 4️Salvar no banco
-    // -------------------------------------------------
 
     const saved = await this.prisma.ocrResult.create({
       data: {
