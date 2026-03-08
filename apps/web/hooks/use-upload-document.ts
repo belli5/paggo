@@ -108,10 +108,10 @@ export function useUploadDocument() {
 
       const analysis = await analyzeDocument(documentId)
 
-      const finalResult: UploadResult = {
-        documentId,
+      const finalResult = {
+        document: uploadedDocument,
         summary: analysis.summary,
-      }
+        }
 
       setResult(finalResult)
       setStatus("success")

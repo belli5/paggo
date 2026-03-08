@@ -16,6 +16,6 @@ export type AnalysisResponse = {
 }
 
 export type UploadResult = {
-  documentId: string
+  document: UploadedDocument
   summary: string
 }

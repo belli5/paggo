@@ -94,12 +94,12 @@ export default function ChatPage() {
         <div className="flex w-full flex-1 flex-col items-center pb-32">
           {!selectedDocument && userId && (
             <UploadBox
-              userId={userId}
-              onFinished={({ summary }) => {
-                setSummary(summary)
-                setSelectedDocument(null)
-              }}
-            />
+                userId={userId}
+                onFinished={({ summary, document }) => {
+                    setSummary(summary)
+                    setSelectedDocument(document)
+                }}
+                />
           )}
 
           {!selectedDocument && summary && (

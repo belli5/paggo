@@ -4,10 +4,11 @@ import { useRef, useState } from "react"
 import { Loader2, UploadCloud } from "lucide-react"
 import { useUploadDocument } from "@/hooks/use-upload-document"
 import UploadFeedback from "@/components/upload/UploadFeedback"
+import { DocumentItem } from "@/types/historico"
 
 type Props = {
   userId: string
-  onFinished?: (data: { documentId: string; summary: string }) => void
+  onFinished?: (data: { document: DocumentItem; summary: string }) => void
 }
 
 export default function UploadBox({ userId, onFinished }: Props) {
@@ -30,7 +31,20 @@ export default function UploadBox({ userId, onFinished }: Props) {
 
     try {
       const data = await uploadAndAnalyze(file, userId)
-      onFinished?.(data)
+
+      const mappedDocument: DocumentItem = {
+        id: data.document.id,
+        filename: data.document.filename,
+        fileUrl: data.document.fileUrl ?? "",
+        createdAt: data.document.createdAt ?? new Date().toISOString(),
+        userId: data.document.userId ?? userId,
+        mimeType: data.document.mimeType ?? file.type,
+      }
+
+      onFinished?.({
+        document: mappedDocument,
+        summary: data.summary,
+      })
     } catch {
       //
     }
