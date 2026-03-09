@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { FileText, LayoutDashboard, Settings, User, LogOut } from "lucide-react"
+import { FileText, LayoutDashboard, User, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useAuthUser } from "@/hooks/use-auth-user"
 import { useHistoryDocuments } from "@/hooks/use-history-documents"
@@ -20,13 +20,10 @@ const menuItems = [
     href: "/dashboard",
     icon: LayoutDashboard,
   },
-]
-
-const bottomItems = [
   {
-    label: "Configurações",
-    href: "/settings",
-    icon: Settings,
+    label: "Chat",
+    href: "/chat",
+    icon: FileText,
   },
 ]
 
@@ -166,34 +163,30 @@ export default function Sidebar({
           </div>
         </div>
 
-        <nav className="space-y-2">
-          {bottomItems.map((item) => {
-            const Icon = item.icon
-            const isActive = pathname === item.href
+        <div className="space-y-3">
+        <div className="px-1">
+            <label className="mb-2 block text-xs text-zinc-400">
+            Escolher IA
+            </label>
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-white text-black"
-                    : "text-zinc-300 hover:bg-zinc-900 hover:text-white"
-                }`}
-              >
-                <Icon size={18} />
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
+            <select
+            defaultValue="gemini"
+            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-3 text-sm text-white outline-none"
+            >
+            <option value="gemini">Gemini</option>
+            <option value="gpt-4">GPT-4</option>
+            <option value="claude">Claude</option>
+            </select>
+        </div>
+
         <button
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-red-400 transition hover:bg-zinc-900 hover:text-red-300"
-            >
+        >
             <LogOut size={18} />
             <span>Sair</span>
         </button>
-        </nav>
+        </div>
       </div>
     </aside>
   )
